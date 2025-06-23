@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Service AC - Profesional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7fafc;
+        }
+        .form-group .icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+        .form-group .form-input {
+            padding-left: 3rem;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .quota-warning {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            border: 2px solid #e17055;
+        }
+        .quota-full {
+            background: linear-gradient(135deg, #ff7675, #d63031);
+            color: white;
+        }
+        .quota-available {
+            background: linear-gradient(135deg, #00cec9, #00b894);
+            color: white;
+        }
+    </style>
+</head>
+<body class="text-gray-700">
+    <div class="container mx-auto p-4 sm:p-6 md:p-8">
+        <div class="w-full max-w-lg mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="header bg-gradient-to-br from-gray-800 to-gray-900 text-white p-8 text-center">
+                <img src="https://i.pinimg.com/736x/b1/43/89/b14389bd28cbf08b8741f7084ce8ec0d.jpg" alt="Logo" class="w-16 h-16 mx-auto rounded-full mb-4 border-2 border-white shadow-md" onerror="this.style.display='none'">
+                <h1 class="text-2xl font-bold tracking-tight">Booking Service AC</h1>
+                <p class="text-gray-300 text-sm mt-1">Jadwalkan kunjungan teknisi profesional kami</p>
+            </div>
+            
+            <div class="form-container p-8">
+                <!-- Configuration Section -->
+                
+
+                <form id="bookingForm" name="submit-to-google-sheet">
+                    <div id="quotaInfo" class="info-box bg-blue-50 border border-blue-200 text-blue-800 rounded-lg p-4 mb-6 text-center text-sm">
+                        <p>Kuota unit terjadwal pada <strong id="selectedDateText">tanggal ini</strong>: <span id="acCount" class="font-bold text-lg">0</span> dari 10 unit</p>
+                        <div id="quotaStatus" class="mt-2 text-xs"></div>
+                    </div>
+
+                    <div class="form-group relative mb-4">
+                        <label for="nama" class="block text-sm font-medium mb-1">Nama Lengkap</label>
+                        <span class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </span>
+                        <input type="text" id="nama" name="nama" class="form-input w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required autocomplete="name" placeholder="Masukan nama Anda">
+                    </div>
+                    
+                    <div class="form-group relative mb-4">
+                        <label for="noHp" class="block text-sm font-medium mb-1">No. Handphone</label>
+                         <span class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        </span>
+                        <input type="tel" id="noHp" name="noHp" placeholder="08xxxxxxxxx" class="form-input w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required autocomplete="tel">
+                    </div>
+
+                    <div class="form-group relative mb-4">
+                        <label for="alamat" class="block text-sm font-medium mb-1">Alamat Lengkap</label>
+                         <span class="icon">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        </span>
+                        <textarea id="alamat" name="alamat" rows="3" class="form-input w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required autocomplete="street-address" placeholder="Contoh: Jl. Sudirman No. 123, RT 01/RW 02, Kel. ..."></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                         <div class="form-group">
+                            <label for="jumlahUnit" class="block text-sm font-medium mb-1">Jumlah Unit AC</label>
+                           <input type="number" id="jumlahUnit" name="jumlahUnit" min="1" max="10" value="1" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" style="overflow-y: auto;" required>
+                            <p class="text-xs text-gray-500 mt-1">Maksimal per booking: 10 unit</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="tanggalKunjungan" class="block text-sm font-medium mb-1">Tgl. Kunjungan</label>
+                            <input type="date" id="tanggalKunjungan" name="tanggalKunjungan" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="submitBtn" class="submit-btn w-full p-4 text-lg font-bold rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out">
+                        Booking Sekarang
+                    </button>
+                    
+                    <div id="bookingWarning" class="hidden mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-yellow-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-yellow-800 text-sm font-medium">Perhatian: Jumlah booking melebihi kuota yang tersisa!</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL CONTAINER -->
+    <div id="loading-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-xl text-center">
+            <div class="loader mx-auto mb-4"></div>
+            <p class="text-gray-600">Memproses booking Anda...</p>
+            <p class="text-sm text-gray-500 mt-2">Mengirim pesan WhatsApp otomatis...</p>
+        </div>
+    </div>
+    
+    <div id="success-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-xl text-center shadow-2xl max-w-sm w-full">
+            <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center text-green-500 text-4xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Booking Berhasil!</h3>
+            <p class="text-gray-500 mb-6">Jadwal Anda telah kami catat dan pesan konfirmasi telah dikirim ke WhatsApp Anda secara otomatis.</p>
+            <button class="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition" onclick="closeFeedbackMessage()">OK</button>
+        </div>
+    </div>
+    
+    <div id="full-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-xl text-center shadow-2xl max-w-sm w-full">
+            <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center text-red-500 text-4xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Jadwal Penuh!</h3>
+            <p class="text-gray-500 mb-6">Maaf, kuota servis untuk tanggal yang Anda pilih sudah penuh (10/10 unit). Silakan pilih tanggal lain yang masih tersedia.</p>
+            <button class="w-full bg-red-600 text-white p-3 rounded-lg font-semibold hover:bg-red-700 transition" onclick="closeFeedbackMessage()">Pilih Tanggal Lain</button>
+        </div>
+    </div>
+
+    <div id="error-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-xl text-center shadow-2xl max-w-sm w-full">
+            <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center text-red-500 text-4xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"></path><path d="M6 6l12 12"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Terjadi Kesalahan</h3>
+            <p id="error-message" class="text-gray-500 mb-6">Silakan coba lagi dalam beberapa saat.</p>
+            <button class="w-full bg-gray-600 text-white p-3 rounded-lg font-semibold hover:bg-gray-700 transition" onclick="closeFeedbackMessage()">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- GANTI URL INI DENGAN URL WEB APP BARU ANDA DARI LANGKAH 1 ---
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbwC_InMR5RBeR2uxTgrHXo9eSD0WWhnaKX6HXtlbT9F3RdAcMvBwFEaW4RzzkTlLfZG/exec';
+            const MAX_UNITS_PER_DAY = 10;
+            
+            const bookingForm = document.forms['submit-to-google-sheet'];
+            const submitButton = document.getElementById('submitBtn');
+            const jumlahUnitInput = document.getElementById('jumlahUnit');
+            const tanggalKunjunganInput = document.getElementById('tanggalKunjungan');
+            const bookingWarning = document.getElementById('bookingWarning');
+
+            const loadingModal = document.getElementById('loading-modal');
+            const successModal = document.getElementById('success-modal');
+            const fullModal = document.getElementById('full-modal');
+            const errorModal = document.getElementById('error-modal');
+            
+           // Fungsi untuk mengirim pesan WhatsApp otomatis menggunakan Woowa API
+async function sendWhatsAppMessage(phoneNumber, customerName, visitDate, unitCount, address) {
+    try {
+        // Format nomor telepon (hapus awalan 0 dan tambah 62)
+        let formattedPhone = phoneNumber.replace(/^0+/, '62');
+        if (!formattedPhone.startsWith('62')) {
+            formattedPhone = '62' + formattedPhone;
+        }
+
+        // Format tanggal ke bahasa Indonesia
+        const dateObj = new Date(visitDate);
+        dateObj.setMinutes(dateObj.getMinutes() + dateObj.getTimezoneOffset());
+        const formattedDate = dateObj.toLocaleDateString('id-ID', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+
+        // Template pesan untuk customer
+        const customerMessage = `🔧 KONFIRMASI BOOKING SERVICE AC 🔧
+
+Halo ${customerName}! 👋
+
+Terima kasih telah melakukan booking service AC dengan kami. Berikut detail booking Anda:
+
+📅 Tanggal Kunjungan: ${formattedDate}
+🏠 Alamat: ${address}
+❄️ Jumlah Unit AC: ${unitCount} unit
+
+✅ Booking Anda telah kami terima dan akan segera diproses oleh tim kami.
+
+📞 Tim teknisi kami akan menghubungi Anda H-1 untuk konfirmasi waktu kunjungan yang tepat.
+
+Jika ada pertanyaan atau perlu mengubah jadwal, silakan hubungi kami.
+
+Terima kasih atas kepercayaan Anda! 🙏
+
+Tim Service AC Profesional`;
+
+        // Kirim pesan ke customer
+        const customerResponse = await fetch('https://crm.woo-wa.com/send/message-text', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                device_id: 'd_ID@6753a3309becd_V25MY7j95sjMF',
+                number: formattedPhone,
+                message: customerMessage
+            })
+        });
+
+        if (customerResponse.ok) {
+            console.log('Pesan WhatsApp berhasil dikirim otomatis');
+            return true;
+        } else {
+            console.error('Gagal mengirim pesan WhatsApp:', await customerResponse.text());
+            return false;
+        }
+    } catch (error) {
+        console.error('Error mengirim WhatsApp:', error);
+        return false;
+    }
+}
+
+            // Alternative fallback function jika API utama gagal
+            async function sendWhatsAppFallback(phoneNumber, customerName, visitDate, unitCount, address) {
+                try {
+                    // Format nomor telepon
+                    let formattedPhone = phoneNumber.replace(/^0+/, '62');
+                    if (!formattedPhone.startsWith('62')) {
+                        formattedPhone = '62' + formattedPhone;
+                    }
+
+                    // Format tanggal
+                    const dateObj = new Date(visitDate);
+                    dateObj.setMinutes(dateObj.getMinutes() + dateObj.getTimezoneOffset());
+                    const formattedDate = dateObj.toLocaleDateString('id-ID', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+
+                    const message = `🔧 KONFIRMASI BOOKING SERVICE AC 🔧
+
+Halo ${customerName}! 👋
+
+Booking berhasil untuk:
+📅 ${formattedDate}
+🏠 ${address}
+❄️ ${unitCount} unit AC
+
+Tim kami akan menghubungi Anda segera.
+
+Terima kasih! 🙏`;
+
+                    // Gunakan CallMeBot API sebagai fallback
+                    const callmebotResponse = await fetch(`https://api.callmebot.com/whatsapp.php?phone=${formattedPhone}&text=${encodeURIComponent(message)}&apikey=YOUR_CALLMEBOT_API_KEY`);
+                    
+                    if (callmebotResponse.ok) {
+                        console.log('Pesan berhasil dikirim via CallMeBot');
+                        return true;
+                    }
+                    
+                    return false;
+                } catch (error) {
+                    console.error('Fallback WhatsApp gagal:', error);
+                    return false;
+                }
+            }
+            
+            // Validasi real-time saat user mengubah jumlah unit atau tanggal
+            function validateBooking() {
+                const visitDate = tanggalKunjunganInput.value;
+                const newUnitCount = parseInt(jumlahUnitInput.value, 10) || 0;
+                const existingUnits = getLocalBookings()[visitDate] || 0;
+                const remainingQuota = MAX_UNITS_PER_DAY - existingUnits;
+                
+                // Update max attribute untuk input jumlah unit
+                jumlahUnitInput.max = Math.max(1, remainingQuota);
+                
+                if (newUnitCount > remainingQuota) {
+                    bookingWarning.classList.remove('hidden');
+                    submitButton.disabled = true;
+                    submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    submitButton.textContent = 'Kuota Tidak Mencukupi';
+                    
+                    // Auto-adjust ke maksimal yang tersedia
+                    if (remainingQuota > 0) {
+                        jumlahUnitInput.value = remainingQuota;
+                    }
+                } else {
+                    bookingWarning.classList.add('hidden');
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    submitButton.textContent = 'Booking Sekarang';
+                }
+                
+                updateAcCountDisplay();
+            }
+            
+            // Event listeners untuk validasi real-time
+            jumlahUnitInput.addEventListener('input', validateBooking);
+            tanggalKunjunganInput.addEventListener('change', validateBooking);
+            
+            bookingForm.addEventListener('submit', async e => {
+                e.preventDefault();
+
+                const visitDate = tanggalKunjunganInput.value;
+                const newUnitCount = parseInt(jumlahUnitInput.value, 10);
+                const existingUnits = getLocalBookings()[visitDate] || 0;
+
+                // Double check sebelum submit
+                if (existingUnits + newUnitCount > MAX_UNITS_PER_DAY) {
+                    showFeedback('full');
+                    return;
+                }
+
+                // Validasi input
+                if (!visitDate || newUnitCount < 1) {
+                    showError('Mohon lengkapi semua data yang diperlukan.');
+                    return;
+                }
+
+                showFeedback('loading');
+                submitButton.disabled = true;
+
+                try {
+                    // Ambil data form
+                    const customerName = document.getElementById('nama').value;
+                    const phoneNumber = document.getElementById('noHp').value;
+                    const address = document.getElementById('alamat').value;
+
+                    // Kirim data ke Google Sheets
+                    const response = await fetch(scriptURL, { 
+                        method: 'POST', 
+                        body: new FormData(bookingForm)
+                    });
+
+                    if (response.ok) {
+                        console.log('Data berhasil dikirim ke Google Sheets');
+                        
+                        // Update local data
+                        updateLocalData(visitDate, newUnitCount);
+                        
+                        // Coba kirim pesan WhatsApp otomatis
+                        const whatsappSent = await sendWhatsAppMessage(phoneNumber, customerName, visitDate, newUnitCount, address);
+                        
+                        // Jika gagal, coba fallback
+                        if (!whatsappSent) {
+                            console.log('Mencoba fallback WhatsApp...');
+                            await sendWhatsAppFallback(phoneNumber, customerName, visitDate, newUnitCount, address);
+                        }
+                        
+                        showFeedback('success');
+                    } else {
+                        throw new Error('Gagal mengirim data ke server');
+                    }
+                } catch (error) {
+                    console.error('Error!', error.message);
+                    showError('Terjadi kesalahan saat mengirim data. Silakan coba lagi.');
+                } finally {
+                    submitButton.disabled = false;
+                }
+            });
+
+            function showFeedback(type) {
+                // Hide all modals
+                loadingModal.classList.add('hidden');
+                successModal.classList.add('hidden');
+                fullModal.classList.add('hidden');
+                errorModal.classList.add('hidden');
+
+                if (type === 'loading') {
+                    loadingModal.classList.remove('hidden');
+                } else if (type === 'success') {
+                    successModal.classList.remove('hidden');
+                } else if (type === 'full') {
+                    fullModal.classList.remove('hidden');
+                }
+            }
+            
+            function showError(message) {
+                document.getElementById('error-message').textContent = message;
+                errorModal.classList.remove('hidden');
+            }
+
+            window.closeFeedbackMessage = function() {
+                const wasSuccess = !successModal.classList.contains('hidden');
+                
+                showFeedback('close');
+                
+                if (wasSuccess) {
+                    bookingForm.reset();
+                    setMinVisitDate();
+                    updateAcCountDisplay();
+                    validateBooking();
+                }
+            }
+            
+            const acCountSpan = document.getElementById('acCount');
+            const selectedDateText = document.getElementById('selectedDateText');
+            const quotaInfo = document.getElementById('quotaInfo');
+            const quotaStatus = document.getElementById('quotaStatus');
+
+            // In-memory storage untuk data booking
+            let bookingData = {};
+
+            function getLocalBookings() {
+                return bookingData;
+            }
+
+            function saveLocalBookings(data) {
+                bookingData = data;
+            }
+
+            function updateLocalData(visitDate, unitCount) {
+                const bookings = getLocalBookings();
+                bookings[visitDate] = (bookings[visitDate] || 0) + unitCount;
+                saveLocalBookings(bookings);
+                updateAcCountDisplay();
+                validateBooking();
+            }
+
+            function updateAcCountDisplay() {
+                const visitDate = tanggalKunjunganInput.value;
+                if (!visitDate) return;
+                
+                const bookings = getLocalBookings();
+                const totalUnits = bookings[visitDate] || 0;
+                const remainingQuota = MAX_UNITS_PER_DAY - totalUnits;
+                
+                acCountSpan.textContent = totalUnits;
+                
+                // Update status kuota dengan warna yang berbeda
+                quotaInfo.className = 'info-box rounded-lg p-4 mb-6 text-center text-sm';
+                
+                if (totalUnits >= MAX_UNITS_PER_DAY) {
+                    quotaInfo.classList.add('quota-full');
+                    quotaStatus.innerHTML = '🚫 Jadwal penuh - tidak bisa booking lagi';
+                } else if (totalUnits >= 8) {
+                    quotaInfo.classList.add('quota-warning');
+                    quotaStatus.innerHTML = `⚠️ Hampir penuh - tersisa ${remainingQuota} slot`;
+                } else {
+                    quotaInfo.classList.add('quota-available');
+                    quotaStatus.innerHTML = `✅ Tersedia - masih ${remainingQuota} slot kosong`;
+                }
+                
+                try {
+                    const dateObj = new Date(visitDate);
+                    dateObj.setMinutes(dateObj.getMinutes() + dateObj.getTimezoneOffset());
+                    selectedDateText.textContent = dateObj.toLocaleDateString('id-ID', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                } catch(e) {
+                    selectedDateText.textContent = 'tanggal yang dipilih';
+                }
+            }
+
+            function setMinVisitDate() {
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const year = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                const todayString = `${year}-${mm}-${dd}`;
+                tanggalKunjunganInput.min = todayString;
+                
+                if (!tanggalKunjunganInput.value) {
+                    tanggalKunjunganInput.value = todayString;
+                }
+            }
+            
+            // Initialize
+            setMinVisitDate();
+            updateAcCountDisplay();
+            validateBooking();
+        });
+    </script>
+</body>
+</html>
