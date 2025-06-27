@@ -48,9 +48,13 @@
             background: linear-gradient(135deg, #00cec9, #00b894);
             color: white;
         }
-        /* Custom transition for quota box color change */
         .info-box {
             transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+        }
+        input:read-only {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -58,7 +62,7 @@
     <div class="container mx-auto p-4 sm:p-6 md:p-8">
         <div class="w-full max-w-lg mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
             <div class="header bg-gradient-to-br from-gray-800 to-gray-900 text-white p-8 text-center">
-                <img src="https://i.pinimg.com/736x/b1/43/89/b14389bd28cbf08b8741f7084ce8ec0d.jpg" alt="Logo" class="w-16 h-16 mx-auto rounded-full mb-4 border-2 border-white shadow-md" onerror="this.style.display='none'">
+                <img src="https://i.pinimg.com/736x/b1/43/89/b14389bd28cbf08b8741f7084ce8ec0d.jpg" alt="Logo" class="w-16 h-16 mx-auto rounded-full mb-4 border-2 border-white shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/64x64/e2e8f0/4a5568?text=AFC';">
                 <h1 class="text-2xl font-bold tracking-tight">Booking Service AC</h1>
                 <p class="text-gray-300 text-sm mt-1">Jadwalkan kunjungan teknisi profesional kami</p>
             </div>
@@ -68,6 +72,14 @@
                     <div id="quotaInfo" class="info-box rounded-lg p-4 mb-6 text-center text-sm">
                         <p>Kuota unit terjadwal pada <strong id="selectedDateText">tanggal ini</strong>: <span id="acCount" class="font-bold text-lg">0</span> / 10 unit</p>
                         <div id="quotaStatus" class="mt-2 text-xs font-medium">Memuat kuota...</div>
+                    </div>
+
+                    <div class="form-group relative mb-4">
+                        <label for="bookingId" class="block text-sm font-medium mb-1">Booking ID</label>
+                         <span class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M9 12h6"/></svg>
+                        </span>
+                        <input type="text" id="bookingId" name="bookingId" class="form-input w-full p-3 border border-gray-300 rounded-lg" readonly placeholder="Memuat Booking ID...">
                     </div>
 
                     <div class="form-group relative mb-4">
@@ -82,7 +94,7 @@
                         <label for="noHp" class="block text-sm font-medium mb-1">No. Handphone</label>
                          <span class="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                        </span>
+                         </span>
                         <input type="tel" id="noHp" name="noHp" placeholder="08xxxxxxxxx" class="form-input w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required autocomplete="tel">
                     </div>
 
@@ -90,23 +102,38 @@
                         <label for="alamat" class="block text-sm font-medium mb-1">Alamat Lengkap</label>
                          <span class="icon">
                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                        </span>
+                         </span>
                         <textarea id="alamat" name="alamat" rows="3" class="form-input w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required autocomplete="street-address" placeholder="Contoh: Jl. Sudirman No. 123, RT 01/RW 02, Kel. ..."></textarea>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                          <div class="form-group">
-                            <label for="jumlahUnit" class="block text-sm font-medium mb-1">Jumlah Unit AC</label>
-                           <input type="number" id="jumlahUnit" name="jumlahUnit" min="1" max="10" value="1" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" style="overflow-y: auto;" required>
-                            <p class="text-xs text-gray-500 mt-1">Maks per booking: 10 unit</p>
-                        </div>
-                        <div class="form-group">
                             <label for="tanggalKunjungan" class="block text-sm font-medium mb-1">Tgl. Kunjungan</label>
                             <input type="date" id="tanggalKunjungan" name="tanggalKunjungan" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required>
-                        </div>
+                         </div>
+                         
+                         <div class="form-group">
+                            <label for="jenisLayanan" class="block text-sm font-medium mb-1">Pilih Layanan</label>
+                            <select id="jenisLayanan" name="jenisLayanan" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required>
+                                <option value="Cuci AC">Cuci AC</option>
+                                <option value="Perawatan AC">Perawatan AC</option>
+                            </select>
+                         </div>
                     </div>
                     
-                    <button type="submit" id="submitBtn" class="submit-btn w-full p-4 text-lg font-bold rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out">
+                    <div class="form-group mb-6">
+                        <label for="jumlahUnit" class="block text-sm font-medium mb-1">Jumlah Unit AC</label>
+                        <select id="jumlahUnit" name="jumlahUnit" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Servis AC menyesuaikan kuota yang tersedia</p>
+                    </div>
+
+                    <div class="form-group mb-6">
+                        <label for="catatan" class="block text-sm font-medium mb-1">Catatan Khusus (Opsional)</label>
+                        <textarea id="catatan" name="catatan" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Contoh: Jika ada kendala hari / reschedule akan saya WA yaa, Terima Kasih."></textarea>
+                    </div>
+                    
+                    <button type="submit" id="submitBtn" class="submit-btn w-full p-4 text-lg font-bold rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out" style="background-color: #ea4b16;">
                         Booking Sekarang
                     </button>
                     
@@ -137,96 +164,100 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
             </div>
             <h3 class="text-xl font-bold text-gray-800 mb-2">Booking Berhasil!</h3>
-            <p class="text-gray-500 mb-6">Jadwal Anda telah kami catat dan pesan konfirmasi telah dikirim ke WhatsApp Anda secara otomatis.</p>
+            <p class="text-gray-500 mb-4">Jadwal Anda telah kami catat dan pesan konfirmasi telah dikirim ke WhatsApp Anda secara otomatis.</p>
+            
+            <div id="editLinkContainer" class="hidden mb-4 text-sm">
+                <p class="text-gray-600">Perlu mengubah data? <a id="editLink" href="#" target="_blank" class="text-blue-600 hover:underline">Edit booking Anda di sini</a>.</p>
+            </div>
+
             <button class="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition" onclick="closeFeedbackMessage()">OK</button>
         </div>
     </div>
     
-    <div id="full-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-8 rounded-xl text-center shadow-2xl max-w-sm w-full">
-            <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center text-red-500 text-4xl">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path></svg>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Jadwal Penuh!</h3>
-            <p class="text-gray-500 mb-6">Maaf, kuota servis untuk tanggal yang Anda pilih sudah penuh (10/10 unit). Silakan pilih tanggal lain yang masih tersedia.</p>
-            <button class="w-full bg-red-600 text-white p-3 rounded-lg font-semibold hover:bg-red-700 transition" onclick="closeFeedbackMessage()">Pilih Tanggal Lain</button>
-        </div>
-    </div>
-
-    <div id="error-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-8 rounded-xl text-center shadow-2xl max-w-sm w-full">
-            <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center text-red-500 text-4xl">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"></path><path d="M6 6l12 12"></path></svg>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Terjadi Kesalahan</h3>
-            <p id="error-message" class="text-gray-500 mb-6">Silakan coba lagi dalam beberapa saat.</p>
-            <button class="w-full bg-gray-600 text-white p-3 rounded-lg font-semibold hover:bg-gray-700 transition" onclick="closeFeedbackMessage()">Tutup</button>
-        </div>
-    </div>
+    <div id="full-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"></div>
+    <div id="error-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- URL INI TETAP SAMA ---
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbySmHN6x_A07WgyK6z-eRupTlewjNx4yS4xVkYffeKR_LMXg6LWvunuJW1oAzko91y_/exec';
+            // Kode di bawah ini adalah versi final yang menggabungkan semua fitur
+            
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxrALKlKT3r5Be9m7zOPnjj8HAf2rWy_hj3Pl9d9SvtF5iIxZyiWhFRxUcfc6LAaRG4/exec';
             const MAX_UNITS_PER_DAY = 10;
     
             const bookingForm = document.forms['submit-to-google-sheet'];
             const submitButton = document.getElementById('submitBtn');
-            const jumlahUnitInput = document.getElementById('jumlahUnit');
+            const jumlahUnitSelect = document.getElementById('jumlahUnit');
             const tanggalKunjunganInput = document.getElementById('tanggalKunjungan');
             const bookingWarning = document.getElementById('bookingWarning');
-    
+            const bookingIdInput = document.getElementById('bookingId');
             const loadingModal = document.getElementById('loading-modal');
             const successModal = document.getElementById('success-modal');
             const fullModal = document.getElementById('full-modal');
             const errorModal = document.getElementById('error-modal');
-    
             const acCountSpan = document.getElementById('acCount');
             const selectedDateText = document.getElementById('selectedDateText');
             const quotaInfo = document.getElementById('quotaInfo');
             const quotaStatus = document.getElementById('quotaStatus');
-    
-            // In-memory storage untuk data booking yang diambil dari spreadsheet
+            const editLinkContainer = document.getElementById('editLinkContainer');
+            const editLink = document.getElementById('editLink');
             let bookingData = {};
-    
-            // --- FUNGSI BARU: UNTUK MENGAMBIL DATA KUOTA DARI SPREADSHEET ---
-            async function fetchBookingCounts() {
-                console.log("Mengambil data kuota dari server...");
+
+            function populateUnitOptions() {
+                jumlahUnitSelect.innerHTML = '';
+                for (let i = 1; i <= 10; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = `${i} Unit`;
+                    jumlahUnitSelect.appendChild(option);
+                }
+            }
+
+            async function fetchInitialData() {
                 quotaStatus.innerHTML = 'Memuat kuota...';
+                bookingIdInput.value = 'Memuat...';
                 try {
-                    // Tambahkan parameter `?action=getCounts` untuk memberi tahu script kita ingin mengambil data
-                    const response = await fetch(`${scriptURL}?action=getCounts`);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    const response = await fetch(`${scriptURL}?action=getInitialData`);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const data = await response.json();
-                    
                     if (data.status === "success") {
-                        console.log("Data kuota berhasil diambil:", data.data);
-                        // Simpan data yang didapat ke variabel bookingData
-                        saveLocalBookings(data.data);
-                    } else {
-                        throw new Error(data.message || "Gagal memuat data dari spreadsheet.");
-                    }
-    
+                        saveLocalBookings(data.quotaData);
+                        bookingIdInput.value = data.nextBookingId;
+                    } else { throw new Error(data.message || "Gagal memuat data."); }
                 } catch (error) {
-                    console.error('Gagal mengambil data kuota:', error);
+                    console.error('Gagal mengambil data awal:', error);
                     quotaStatus.innerHTML = '<span class="text-red-500">Gagal memuat kuota.</span>';
+                    bookingIdInput.value = 'Error!';
                 } finally {
-                    // Perbarui tampilan setelah data diambil (atau gagal)
                     updateAcCountDisplay();
                     validateBooking();
                 }
             }
-    
-            function getLocalBookings() {
-                return bookingData;
+            
+            async function fetchBookingForEdit(bookingId) {
+                showFeedback('loading');
+                try {
+                    const response = await fetch(`${scriptURL}?action=getBookingById&id=${bookingId}`);
+                    if (!response.ok) throw new Error('Data booking tidak ditemukan.');
+                    const result = await response.json();
+                    if (result.status === 'success' && result.data) {
+                        bookingIdInput.value = result.data.bookingId;
+                        document.getElementById('nama').value = result.data.nama;
+                        document.getElementById('noHp').value = result.data.noHp;
+                        document.getElementById('alamat').value = result.data.alamat;
+                        document.getElementById('tanggalKunjungan').value = result.data.tanggalKunjungan;
+                        document.getElementById('jenisLayanan').value = result.data.jenisLayanan;
+                        document.getElementById('jumlahUnit').value = result.data.jumlahUnit;
+                        await fetchInitialData();
+                    } else { throw new Error(result.message || 'Data tidak ditemukan.'); }
+                } catch(e) {
+                    showError('Gagal memuat data booking untuk diedit. ' + e.message);
+                } finally {
+                    showFeedback('close');
+                }
             }
-    
-            function saveLocalBookings(data) {
-                bookingData = data;
-            }
-    
+
+            function getLocalBookings() { return bookingData; }
+            function saveLocalBookings(data) { bookingData = data; }
             function updateLocalData(visitDate, unitCount) {
                 const bookings = getLocalBookings();
                 bookings[visitDate] = (bookings[visitDate] || 0) + unitCount;
@@ -237,17 +268,18 @@
     
             function updateAcCountDisplay() {
                 const visitDate = tanggalKunjunganInput.value;
-                if (!visitDate) return;
-    
+                if (!visitDate) {
+                    selectedDateText.textContent = 'pilih tanggal';
+                    acCountSpan.textContent = '0';
+                    quotaStatus.innerHTML = 'Pilih tanggal untuk melihat kuota';
+                    quotaInfo.className = 'info-box rounded-lg p-4 mb-6 text-center text-sm';
+                    return;
+                }
                 const bookings = getLocalBookings();
                 const totalUnits = bookings[visitDate] || 0;
                 const remainingQuota = MAX_UNITS_PER_DAY - totalUnits;
-    
                 acCountSpan.textContent = `${totalUnits}`;
-                
-                // Update status kuota dengan warna yang berbeda
                 quotaInfo.className = 'info-box rounded-lg p-4 mb-6 text-center text-sm transition-all duration-300';
-                
                 if (totalUnits >= MAX_UNITS_PER_DAY) {
                     quotaInfo.classList.add('quota-full');
                     quotaStatus.innerHTML = '🚫 Jadwal penuh - tidak bisa booking lagi';
@@ -258,43 +290,33 @@
                     quotaInfo.classList.add('quota-available');
                     quotaStatus.innerHTML = `✅ Tersedia - masih ${remainingQuota} slot kosong`;
                 }
-                
                 try {
-                    const dateObj = new Date(visitDate);
-                    dateObj.setMinutes(dateObj.getMinutes() + dateObj.getTimezoneOffset());
-                    const formattedDate = dateObj.toLocaleDateString('id-ID', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
+                    const dateObj = new Date(visitDate + 'T00:00:00');
+                    const formattedDate = dateObj.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                     document.getElementById('selectedDateText').textContent = formattedDate;
                 } catch (e) {
                     document.getElementById('selectedDateText').textContent = 'tanggal yang dipilih';
                 }
             }
     
-            // --- FUNGSI VALIDASI YANG DIMODIFIKASI ---
             function validateBooking() {
                 const visitDate = tanggalKunjunganInput.value;
-                const newUnitCount = parseInt(jumlahUnitInput.value, 10) || 0;
-                // Menggunakan data dari getLocalBookings() yang sekarang berisi data dari server
+                if (!visitDate) {
+                    submitButton.disabled = true;
+                    submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    return;
+                }
+                const newUnitCount = parseInt(jumlahUnitSelect.value, 10) || 0;
                 const existingUnits = getLocalBookings()[visitDate] || 0;
                 const remainingQuota = MAX_UNITS_PER_DAY - existingUnits;
-                
-                // Update max attribute untuk input jumlah unit secara dinamis
-                jumlahUnitInput.max = Math.max(1, remainingQuota);
-    
                 if (remainingQuota <= 0) {
-                     bookingWarning.classList.remove('hidden');
-                     bookingWarning.querySelector('span').textContent = 'Kuota untuk tanggal ini sudah penuh.';
-                     submitButton.disabled = true;
-                     submitButton.classList.add('opacity-50', 'cursor-not-allowed');
-                     submitButton.textContent = 'Kuota Penuh';
-                     if (newUnitCount > 0) jumlahUnitInput.value = ''; // Kosongkan jika kuota habis
+                    bookingWarning.classList.add('hidden');
+                    submitButton.disabled = true;
+                    submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    submitButton.textContent = 'Kuota Penuh';
                 } else if (newUnitCount > remainingQuota) {
                     bookingWarning.classList.remove('hidden');
-                     bookingWarning.querySelector('span').textContent = `Perhatian: Kuota tersisa hanya ${remainingQuota} unit!`;
+                    bookingWarning.querySelector('span').textContent = `Perhatian: Kuota tersisa hanya ${remainingQuota} unit!`;
                     submitButton.disabled = true;
                     submitButton.classList.add('opacity-50', 'cursor-not-allowed');
                     submitButton.textContent = 'Kuota Tidak Cukup';
@@ -306,99 +328,70 @@
                 }
             }
             
-            // --- EVENT LISTENER YANG DIMODIFIKASI ---
-            jumlahUnitInput.addEventListener('input', validateBooking);
-            tanggalKunjunganInput.addEventListener('change', () => {
-                 updateAcCountDisplay();
-                 validateBooking();
-            });
-            
             bookingForm.addEventListener('submit', async e => {
                 e.preventDefault();
-    
                 const visitDate = tanggalKunjunganInput.value;
-                const newUnitCount = parseInt(jumlahUnitInput.value, 10);
-                const existingUnits = getLocalBookings()[visitDate] || 0;
-    
-                if (existingUnits + newUnitCount > MAX_UNITS_PER_DAY) {
-                    showFeedback('full');
-                    return;
-                }
-    
+                const newUnitCount = parseInt(jumlahUnitSelect.value, 10);
                 if (!visitDate || newUnitCount < 1 || !bookingForm.checkValidity()) {
                     showError('Mohon lengkapi semua data dengan benar.');
                     return;
                 }
-    
+                const existingUnits = getLocalBookings()[visitDate] || 0;
+                if (existingUnits + newUnitCount > MAX_UNITS_PER_DAY) {
+                    showFeedback('full');
+                    return;
+                }
                 showFeedback('loading');
                 submitButton.disabled = true;
-    
                 try {
-                    const customerName = document.getElementById('nama').value;
-                    const phoneNumber = document.getElementById('noHp').value;
-                    const address = document.getElementById('alamat').value;
-    
-                    const response = await fetch(scriptURL, {
-                        method: 'POST',
-                        body: new FormData(bookingForm)
-                    });
-    
-                    if (response.ok) {
-                        console.log('Data berhasil dikirim ke Google Sheets');
+                    const formData = new FormData(bookingForm);
+                    const response = await fetch(scriptURL, { method: 'POST', body: formData });
+                    const result = await response.json();
+                    if (result.status === "success") {
                         updateLocalData(visitDate, newUnitCount);
-                        
-                        const whatsappSent = await sendWhatsAppMessage(phoneNumber, customerName, visitDate, newUnitCount, address);
-                        if (!whatsappSent) {
-                            console.log('Mencoba fallback WhatsApp...');
-                            await sendWhatsAppFallback(phoneNumber, customerName, visitDate, newUnitCount, address);
-                        }
-                        
+                        await sendWhatsAppMessage(
+                            document.getElementById('noHp').value,
+                            document.getElementById('nama').value,
+                            visitDate,
+                            newUnitCount,
+                            document.getElementById('alamat').value,
+                            document.getElementById('bookingId').value,
+                            document.getElementById('jenisLayanan').value
+                        );
+                        const editUrl = `${window.location.href.split('?')[0]}?edit=${result.bookingId}`;
+                        editLink.href = editUrl;
+                        editLinkContainer.classList.remove('hidden');
                         showFeedback('success');
-                    } else {
-                        throw new Error('Gagal mengirim data ke server');
-                    }
+                    } else { throw new Error(result.message || 'Gagal mengirim data ke server'); }
                 } catch (error) {
                     console.error('Error!', error.message);
                     showError('Terjadi kesalahan saat mengirim data. Silakan coba lagi.');
-                } finally {
-                    // Tombol submit akan di-enable kembali oleh fungsi validateBooking() setelah modal ditutup
                 }
             });
-    
+            
             function showFeedback(type) {
                 loadingModal.classList.add('hidden');
                 successModal.classList.add('hidden');
                 fullModal.classList.add('hidden');
                 errorModal.classList.add('hidden');
-    
-                if (type === 'loading') {
-                    loadingModal.classList.remove('hidden');
-                } else if (type === 'success') {
-                    successModal.classList.remove('hidden');
-                } else if (type === 'full') {
-                    fullModal.classList.remove('hidden');
-                }
+                if (type === 'loading') loadingModal.classList.remove('hidden');
+                else if (type === 'success') successModal.classList.remove('hidden');
+                else if (type === 'full') fullModal.classList.remove('hidden');
             }
             
             function showError(message) {
                 document.getElementById('error-message').textContent = message;
-                loadingModal.classList.add('hidden'); // Sembunyikan loading jika ada error
+                showFeedback('close');
                 errorModal.classList.remove('hidden');
             }
     
             window.closeFeedbackMessage = function() {
                 const wasSuccess = !successModal.classList.contains('hidden');
-                
-                showFeedback('close'); // Menutup semua modal
-                
+                showFeedback('close');
                 if (wasSuccess) {
-                    bookingForm.reset();
-                    setMinVisitDate();
-                    // Setelah reset, panggil update dan validate lagi untuk state yang bersih
-                    updateAcCountDisplay(); 
-                    validateBooking();
+                    window.location.href = window.location.href.split('?')[0];
                 }
-                validateBooking(); // Panggil validasi lagi untuk re-enable tombol jika kuota masih ada
+                validateBooking();
             }
             
             function setMinVisitDate() {
@@ -406,60 +399,71 @@
                 const offset = today.getTimezoneOffset();
                 const todayLocal = new Date(today.getTime() - (offset*60*1000));
                 const todayString = todayLocal.toISOString().split('T')[0];
-    
                 tanggalKunjunganInput.min = todayString;
-                
                 if (!tanggalKunjunganInput.value) {
                     tanggalKunjunganInput.value = todayString;
                 }
             }
             
-            // --- INISIALISASI HALAMAN YANG DIMODIFIKASI ---
+            async function sendWhatsAppMessage(phoneNumber, customerName, visitDate, unitCount, address, bookingId, serviceType) {
+                 try {
+                     let formattedPhone = phoneNumber.replace(/^0+/, '62');
+                     if (!formattedPhone.startsWith('62')) { formattedPhone = '62' + formattedPhone; }
+                     const dateObj = new Date(visitDate + 'T00:00:00');
+                     const formattedDate = dateObj.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                     const customerMessage = `🔧 KONFIRMASI BOOKING SERVICE AC 🔧\n\n*Booking ID: ${bookingId}*\n\nHalo *${customerName}*! 👋\n\nTerima kasih, booking Anda telah kami catat dengan detail:\n\n📅 *Tanggal Kunjungan:*\n${formattedDate}\n\n🏠 *Alamat:*\n${address}\n\n🛠️ *Jenis Layanan:*\n${serviceType}\n\n❄️ *Jumlah Unit AC:*\n${unitCount} unit\n\n✅ Jadwal Anda telah dikonfirmasi.\n\nJika ada pertanyaan atau perlu mengubah jadwal, silakan hubungi kami.\n\n*AQSHA FRESH & COOL*`;
+                     const customerResponse = await fetch('https://crm.woo-wa.com/send/message-text', {
+                         method: 'POST',
+                         headers: {'Content-Type': 'application/json'},
+                         body: JSON.stringify({
+                             device_id: 'd_ID@6753a3309becd_V25MY7j95sjMF',
+                             number: formattedPhone,
+                             message: customerMessage
+                         })
+                     });
+                     if (customerResponse.ok) { return true; } 
+                     else { console.error('Gagal mengirim pesan WhatsApp:', await customerResponse.text()); return false; }
+                 } catch (error) { console.error('Error mengirim WhatsApp:', error); return false; }
+            }
+            
+            // FUNGSI INI TETAP ADA, NAMUN TIDAK DIGUNAKAN DI ALUR UTAMA
+            async function sendWhatsAppFallback(phoneNumber, customerName, visitDate, unitCount, address) { return false; }
+
+            // =========================================================
+            // FUNGSI BARU DITAMBAHKAN DI SINI UNTUK MEMBLOKIR HARI MINGGU
+            // =========================================================
+            tanggalKunjunganInput.addEventListener('input', function(e) {
+                const selectedDateString = e.target.value;
+                if (selectedDateString.startsWith('2025')) {
+                    const selectedDate = new Date(selectedDateString + 'T00:00:00');
+                    if (selectedDate.getDay() === 0) { // 0 = Minggu
+                        alert("Mohon maaf, kami tidak melayani booking pada hari Minggu di tahun 2025. Silakan pilih hari lain.");
+                        e.target.value = '';
+                        tanggalKunjunganInput.dispatchEvent(new Event('change'));
+                    }
+                }
+            });
+
+            jumlahUnitSelect.addEventListener('input', validateBooking);
+            tanggalKunjunganInput.addEventListener('change', () => {
+                 updateAcCountDisplay();
+                 validateBooking();
+            });
+            
             function initializePage() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const editBookingId = urlParams.get('edit');
+                populateUnitOptions();
                 setMinVisitDate();
-                fetchBookingCounts(); // Ganti pemanggilan fungsi lama dengan yang baru
+                if (editBookingId) {
+                    console.log('Mode Edit, mengambil data untuk ID:', editBookingId);
+                    fetchBookingForEdit(editBookingId);
+                } else {
+                    fetchInitialData();
+                }
             }
             
             initializePage();
-    
-            // --- SEMUA FUNGSI LAINNYA (sendWhatsAppMessage, dll) TETAP SAMA ---
-            async function sendWhatsAppMessage(phoneNumber, customerName, visitDate, unitCount, address) {
-                try {
-                    let formattedPhone = phoneNumber.replace(/^0+/, '62');
-                    if (!formattedPhone.startsWith('62')) {
-                        formattedPhone = '62' + formattedPhone;
-                    }
-                    const dateObj = new Date(visitDate);
-                    dateObj.setMinutes(dateObj.getMinutes() + dateObj.getTimezoneOffset());
-                    const formattedDate = dateObj.toLocaleDateString('id-ID', { 
-                        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-                    });
-                    const customerMessage = `🔧 KONFIRMASI BOOKING SERVICE AC 🔧\n\nHalo ${customerName}! 👋\n\nTerima kasih telah melakukan booking service AC Sebagai Berikut:\n\n📅 Tanggal Kunjungan: ${formattedDate}\n🏠 Alamat: ${address}\n❄️ Jumlah Unit AC: ${unitCount} unit\n\n✅ Booking Anda telah di terima dan sudah kami jadwalkan.\n\nJika ada pertanyaan atau perlu mengubah jadwal, silakan hubungi kami.\n\nAQSHA FRESH & COOL`;
-                    const customerResponse = await fetch('https://crm.woo-wa.com/send/message-text', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            device_id: 'd_ID@6753a3309becd_V25MY7j95sjMF',
-                            number: formattedPhone,
-                            message: customerMessage
-                        })
-                    });
-                    if (customerResponse.ok) {
-                        console.log('Pesan WhatsApp berhasil dikirim otomatis');
-                        return true;
-                    } else {
-                        console.error('Gagal mengirim pesan WhatsApp:', await customerResponse.text());
-                        return false;
-                    }
-                } catch (error) {
-                    console.error('Error mengirim WhatsApp:', error);
-                    return false;
-                }
-            }
-            async function sendWhatsAppFallback(phoneNumber, customerName, visitDate, unitCount, address) {
-                 // Fungsi fallback Anda tetap sama, tidak perlu diubah
-                return false; // Contoh
-            }
         });
     </script>
 </body>
