@@ -415,7 +415,7 @@
                 if (!formattedPhone.startsWith('62')) { formattedPhone = '62' + formattedPhone; }
                 const dateObj = new Date(visitDate + 'T00:00:00');
                 const formattedDate = dateObj.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                const customerMessage = `🔧 KONFIRMASI BOOKING SERVICE AC 🔧\n\n*Booking ID: ${bookingId}*\n\nHalo *${customerName}*! 👋\n\nTerima kasih, booking Anda telah kami catat dengan detail:\n\n📅 *Tanggal Kunjungan:*\n${formattedDate}\n\n🏠 *Alamat:*\n${address}\n\n🛠️ *Detail Layanan:*\n${serviceDetails}\n\n*Total Unit AC: ${unitCount} unit*\n\n✅ Jadwal Anda telah dikonfirmasi.\n\nJika ada pertanyaan atau perlu mengubah jadwal, silakan hubungi kami.\n\n*AQSHA FRESH & COOL*`;
+                const customerMessage = `🔧 KONFIRMASI BOOKING SERVICE AC 🔧\n\n*Booking ID: ${bookingId}*\n\nHalo Bpk/Ibu *${customerName}*! 👋 sudah booking layanan AC sbb :\n\n📅 *Tanggal Kunjungan:* ${formattedDate}\n🏠 *Alamat:* ${address}\n🛠️ *Detail Layanan:* ${serviceDetails}\n❄ *Jumlah Unit AC: ${unitCount} unit*\n\n✅ PIC Teknisi yang kami tugaskan  melakukan kunjungan jadwal diatas adalah sdr. Dedi.\n\nJika ada pertanyaan atau perlu mengubah jadwal, silakan hubungi kami.\n\n*AQSHA FRESH & COOL*`;
                 const customerResponse = await fetch('https://crm.woo-wa.com/send/message-text', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
