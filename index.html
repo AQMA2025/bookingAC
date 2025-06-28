@@ -65,6 +65,7 @@
         .spin-button:hover { background-color: #e5e7eb; }
         .spin-button-value { font-size: 1.125rem; font-weight: 600; min-width: 3rem; text-align: center; }
         /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
+        /* TES DEBUGGING -- Hapus lagi nanti */
     </style>
 </head>
 <body class="text-gray-700">
@@ -115,36 +116,37 @@
                         <textarea id="alamat" name="alamat" rows="3" class="form-input w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required autocomplete="street-address" placeholder="Contoh : Brazilia D4/13"></textarea>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                         <div class="form-group">
-                            <label for="tanggalKunjungan" class="block text-sm font-medium mb-1">Tgl. Kunjungan</label>
-                            <input type="date" id="tanggalKunjungan" name="tanggalKunjungan" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required>
-                         </div>
-                         
-                    <div class="space-y-4 mb-6 p-4 border border-gray-200 rounded-lg">
-    <label class="block text-sm font-medium mb-2">Pilih Layanan & Jumlah Unit</label>
-    
-    <div class="flex items-center justify-between py-2">
-        <span class="text-gray-700">Cuci</span>
-        <div class="spin-button-container">
-            <button type="button" class="spin-button" data-service="cuci" data-action="decrement">-</button>
-            <span id="qty-cuci" class="spin-button-value">0</span>
-            <button type="button" class="spin-button" data-service="cuci" data-action="increment">+</button>
+                   <div class="grid grid-cols-1 xl:grid-cols-2 gap-x-4"></div>
+    <div class="space-y-4">
+        <div class="form-group">
+            <label for="tanggalKunjungan" class="block text-sm font-medium mb-1">Tgl. Kunjungan</label>
+            <input type="date" id="tanggalKunjungan" name="tanggalKunjungan" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required>
         </div>
-    </div>
+     
+    <div class="space-y-4 p-4 border border-gray-200 rounded-lg mt-4 md:mt-0">
+        <label class="block text-sm font-medium mb-2">Pilih Layanan & Jumlah Unit</label>
+        
+        <div class="flex items-center justify-between py-2">
+            <span class="text-gray-700">Cuci</span>
+            <div class="spin-button-container">
+                <button type="button" class="spin-button" data-service="cuci" data-action="decrement">-</button>
+                <span id="qty-cuci" class="spin-button-value">0</span>
+                <button type="button" class="spin-button" data-service="cuci" data-action="increment">+</button>
+            </div>
+        </div>
 
-    <div class="flex items-center justify-between py-2">
-        <span class="text-gray-700">Perbaikan</span>
-        <div class="spin-button-container">
-            <button type="button" class="spin-button" data-service="perawatan" data-action="decrement">-</button>
-            <span id="qty-perawatan" class="spin-button-value">0</span>
-            <button type="button" class="spin-button" data-service="perawatan" data-action="increment">+</button>
-            
+        <div class="flex items-center justify-between py-2">
+            <span class="text-gray-700">Perbaikan</span>
+            <div class="spin-button-container">
+                <button type="button" class="spin-button" data-service="perawatan" data-action="decrement">-</button>
+                <span id="qty-perawatan" class="spin-button-value">0</span>
+                <button type="button" class="spin-button" data-service="perawatan" data-action="increment">+</button>
+            </div>
         </div>
+        <p class="text-xs text-center text-gray-500 pt-2">Jumlah unit menyesuaikan kuota maksimal harian</p>
     </div>
-    <p>Jumlah unit menyesuaikan kuota maksimal harian   </p>
 </div>
-    
+
 <input type="hidden" name="jumlahCuci" id="jumlahCuci" value="0">
 <input type="hidden" name="jumlahPerawatan" id="jumlahPerawatan" value="0">
 <input type="hidden" name="jumlahUnit" id="jumlahUnit" value="0">
