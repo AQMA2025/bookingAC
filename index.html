@@ -189,10 +189,6 @@
             <h3 class="text-xl font-bold text-gray-800 mb-2">Booking Berhasil!</h3>
             <p class="text-gray-500 mb-4">Jadwal Anda telah kami catat dan pesan konfirmasi telah dikirim ke WhatsApp Anda secara otomatis.</p>
             
-            <div id="editLinkContainer" class="hidden mb-4 text-sm">
-                <p class="text-gray-600">Perlu mengubah data? <a id="editLink" href="#" target="_blank" class="text-blue-600 hover:underline">Edit booking Anda di sini</a>.</p>
-            </div>
-
             <button class="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition" onclick="closeFeedbackMessage()">OK</button>
         </div>
     </div>
@@ -221,8 +217,6 @@
         const selectedDateText = document.getElementById('selectedDateText');
         const quotaInfo = document.getElementById('quotaInfo');
         const quotaStatus = document.getElementById('quotaStatus');
-        const editLinkContainer = document.getElementById('editLinkContainer');
-        const editLink = document.getElementById('editLink');
         
         // Variabel BARU untuk fitur spin button
         const qtyCuciSpan = document.getElementById('qty-cuci');
@@ -363,10 +357,6 @@
                         serviceDetails.join(', ') // Menggabungkan detail layanan
                     );
 
-                    const editUrl = `${window.location.href.split('?')[0]}?edit=${result.bookingId}`;
-                    editLink.href = editUrl;
-                    editLinkContainer.classList.remove('hidden');
-                    
                     showFeedback('success');
                 } else {
                     throw new Error(result.message || 'Gagal mengirim data ke server');
