@@ -176,22 +176,45 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Auto refresh indicator */
+        .refresh-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .refresh-indicator.show {
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="text-gray-700">
+    <!-- Auto refresh indicator -->
+    <div id="refreshIndicator" class="refresh-indicator">
+        🔄 Memperbarui data...
+    </div>
+
     <div class="container mx-auto p-4 sm:p-6 md:p-8">
         <div class="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
             <div class="header bg-gradient-to-br from-gray-800 to-gray-900 text-white p-8 text-center">
                 <img src="https://i.pinimg.com/736x/b1/43/89/b14389bd28cbf08b8741f7084ce8ec0d.jpg" alt="Logo" class="w-16 h-16 mx-auto rounded-full mb-4 border-2 border-white shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/64x64/e2e8f0/4a5568?text=AFC';">
                 <h1 class="text-2xl font-bold tracking-tight">Booking Layanan AC</h1>
-                <p class="text-gray-300 text-sm mt-2"></p>
+                <p class="text-gray-300 text-sm mt-2">Sistem Booking Real-time</p>
             </div>
             
             <div class="form-container p-8">
                 <form id="bookingForm" name="submit-to-google-sheet">
                     <div id="quotaInfo" class="info-box rounded-lg p-4 mb-6 text-center text-sm">
-                        <p id="quotaMessage">Slot waktu tersedia pada <strong id="selectedDateText">pilih tanggal</strong></p>
-                        <div id="quotaStatus" class="mt-2 text-xs font-medium">Pilih tanggal untuk melihat slot waktu</div>
+                        <p id="quotaMessage">Memuat informasi slot...</p>
+                        <div id="quotaStatus" class="mt-2 text-xs font-medium">Mohon tunggu...</div>
                     </div>
 
                     <div class="form-group relative mb-4">
@@ -259,13 +282,15 @@
                     </div>
 
                     <div class="form-group mb-4">
-                        <label for="tanggalKunjungan" class="block text-sm font-medium mb-1">Tanggal Kunjungan</label>
+                        <label for="tanggalKunjungan" class="block text-sm font-medium mb-1">Tanggal Kunjungan <span class="text-red-500">*</span></label>
                         <input type="date" id="tanggalKunjungan" name="tanggalKunjungan" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required>
+                        <p class="text-xs text-gray-500 mt-1">⚠️ Wajib pilih tanggal untuk melihat slot tersedia</p>
                     </div>
 
                     <!-- Service Selection -->
                     <div id="serviceSelection" class="mb-6">
-                        <label class="block text-sm font-medium mb-4">Pilih Layanan</label>
+                        <label class="block text-sm font-medium mb-4">Pilih Layanan <span class="text-red-500">*</span></label>
+                        <p class="text-xs text-gray-600 mb-4">💡 Total maksimal 10 unit AC per hari (gabungan cuci + perbaikan)</p>
                         
                         <!-- Cuci/Pemeriksaan AC Service -->
                         <div id="cuciSection" class="service-section">
@@ -274,7 +299,7 @@
                                 <span id="cuciCount" class="unit-counter bg-blue-100 text-blue-800">0 unit</span>
                             </div>
                             <div class="quantity-controls">
-                                <button type="button" class="quantity-btn" id="cuciMinus">−</button>
+                                <button type="button" class="quantity-btn disabled" id="cuciMinus">−</button>
                                 <div class="quantity-display" id="cuciQuantity">0</div>
                                 <button type="button" class="quantity-btn" id="cuciPlus">+</button>
                             </div>
@@ -287,23 +312,31 @@
                                 <span id="perbaikanCount" class="unit-counter bg-green-100 text-green-800">0 unit</span>
                             </div>
                             <div class="quantity-controls">
-                                <button type="button" class="quantity-btn" id="perbaikanMinus">−</button>
+                                <button type="button" class="quantity-btn disabled" id="perbaikanMinus">−</button>
                                 <div class="quantity-display" id="perbaikanQuantity">0</div>
                                 <button type="button" class="quantity-btn" id="perbaikanPlus">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Total Units Display -->
+                        <div class="bg-gray-50 rounded-lg p-4 mt-4">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium text-gray-700">Total Unit AC:</span>
+                                <span id="totalUnitsDisplay" class="font-bold text-lg text-blue-600">0 / 10</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Time Selection -->
                     <div id="timeSelection" class="mb-6">
-                        <label class="block text-sm font-medium mb-4">Pilih Waktu Kunjungan</label>
+                        <label class="block text-sm font-medium mb-4">Pilih Waktu Kunjungan <span class="text-red-500">*</span></label>
                         
-                        <div class="time-option" id="morningSlot" data-time="morning">
+                        <div class="time-option disabled" id="morningSlot" data-time="morning">
                             <div class="font-bold text-lg">🌅 Pagi</div>
                             <div class="text-sm text-gray-600 mt-1">08:00 - 11:30</div>
                         </div>
                         
-                        <div class="time-option" id="afternoonSlot" data-time="afternoon">
+                        <div class="time-option disabled" id="afternoonSlot" data-time="afternoon">
                             <div class="font-bold text-lg">☀️ Siang</div>
                             <div class="text-sm text-gray-600 mt-1">13:00 - 16:30</div>
                         </div>
@@ -320,8 +353,8 @@
                         <textarea id="catatan" name="catatan" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Contoh : Saya bersedia reschedule kunjungan teknisi jika ada jadwal kosong lebih cepat"></textarea>
                     </div>
                     
-                    <button type="submit" id="submitBtn" class="submit-btn w-full p-4 text-lg font-bold rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out" style="background-color: #ea4b16;" disabled>
-                        Pilih Minimal 1 Layanan & Waktu
+                    <button type="submit" id="submitBtn" class="submit-btn w-full p-4 text-lg font-bold rounded-lg text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out opacity-50 cursor-not-allowed" style="background-color: #ea4b16;" disabled>
+                        Pilih Tanggal & Layanan Terlebih Dahulu
                     </button>
                     
                     <div id="bookingWarning" class="hidden mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -388,8 +421,9 @@
         const jumlahUnitInput = document.getElementById('jumlahUnit');
         const quotaStatus = document.getElementById('quotaStatus');
         const quotaMessage = document.getElementById('quotaMessage');
-        const selectedDateText = document.getElementById('selectedDateText');
         const quotaInfo = document.getElementById('quotaInfo');
+        const refreshIndicator = document.getElementById('refreshIndicator');
+        const totalUnitsDisplay = document.getElementById('totalUnitsDisplay');
 
         // Cluster elements
         const clusterSelect = document.getElementById('cluster');
@@ -427,6 +461,33 @@
         };
         let selectedTime = '';
         let dailyQuota = {}; // Will store daily quota information from server
+        let autoRefreshInterval;
+
+        // ===================================================
+        // AUTO REFRESH FUNCTIONALITY
+        // ===================================================
+        
+        function showRefreshIndicator() {
+            refreshIndicator.classList.add('show');
+            setTimeout(() => {
+                refreshIndicator.classList.remove('show');
+            }, 2000);
+        }
+
+        function startAutoRefresh() {
+            // Refresh every 30 seconds
+            autoRefreshInterval = setInterval(async () => {
+                showRefreshIndicator();
+                await fetchInitialData(false); // Silent refresh
+                updateDateDisplay();
+            }, 30000);
+        }
+
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+        }
 
         // ===================================================
         // CLUSTER MANAGEMENT
@@ -445,12 +506,27 @@
         });
 
         // ===================================================
-        // QUANTITY MANAGEMENT FUNCTIONS
+        // QUANTITY MANAGEMENT FUNCTIONS (FIXED LOGIC)
         // ===================================================
         
         function updateQuantity(serviceType, change) {
             const currentQty = serviceQuantities[serviceType];
-            const newQty = Math.max(0, Math.min(10, currentQty + change)); // Max 10 units per service
+            const otherServiceType = serviceType === 'cuci' ? 'perbaikan' : 'cuci';
+            const otherQty = serviceQuantities[otherServiceType];
+            const currentTotal = currentQty + otherQty;
+            
+            let newQty = currentQty + change;
+            
+            // Ensure quantity doesn't go below 0
+            if (newQty < 0) {
+                newQty = 0;
+            }
+            
+            // Ensure total doesn't exceed 10
+            const newTotal = newQty + otherQty;
+            if (newTotal > 10) {
+                newQty = 10 - otherQty; // Adjust to fit within limit
+            }
             
             serviceQuantities[serviceType] = newQty;
             
@@ -462,21 +538,39 @@
             const section = document.getElementById(`${serviceType}Section`);
             section.classList.toggle('has-selection', newQty > 0);
             
-            // Update minus button state
-            const minusBtn = document.getElementById(`${serviceType}Minus`);
-            minusBtn.classList.toggle('disabled', newQty === 0);
-            
-            // Update plus button state
-            const plusBtn = document.getElementById(`${serviceType}Plus`);
-            plusBtn.classList.toggle('disabled', newQty >= 10);
-            
+            // Update button states
+            updateQuantityButtons();
             updateTotalUnits();
             validateBooking();
+        }
+
+        function updateQuantityButtons() {
+            const totalUnits = serviceQuantities.cuci + serviceQuantities.perbaikan;
+            
+            // Update minus buttons
+            cuciMinus.classList.toggle('disabled', serviceQuantities.cuci === 0);
+            perbaikanMinus.classList.toggle('disabled', serviceQuantities.perbaikan === 0);
+            
+            // Update plus buttons - disable if total would exceed 10
+            cuciPlus.classList.toggle('disabled', totalUnits >= 10);
+            perbaikanPlus.classList.toggle('disabled', totalUnits >= 10);
         }
 
         function updateTotalUnits() {
             const totalUnits = serviceQuantities.cuci + serviceQuantities.perbaikan;
             jumlahUnitInput.value = totalUnits;
+            totalUnitsDisplay.textContent = `${totalUnits} / 10`;
+            
+            // Update color based on total
+            if (totalUnits === 0) {
+                totalUnitsDisplay.className = 'font-bold text-lg text-gray-400';
+            } else if (totalUnits >= 8) {
+                totalUnitsDisplay.className = 'font-bold text-lg text-red-600';
+            } else if (totalUnits >= 5) {
+                totalUnitsDisplay.className = 'font-bold text-lg text-yellow-600';
+            } else {
+                totalUnitsDisplay.className = 'font-bold text-lg text-blue-600';
+            }
             
             // Update hidden input with service data
             const serviceData = {
@@ -491,6 +585,10 @@
         // ===================================================
         
         function selectTimeSlot(timeSlot) {
+            if (timeSlot.classList.contains('disabled')) {
+                return;
+            }
+            
             // Remove selection from all slots
             morningSlot.classList.remove('selected');
             afternoonSlot.classList.remove('selected');
@@ -507,41 +605,65 @@
             validateBooking();
         }
 
+        function enableTimeSlots() {
+            morningSlot.classList.remove('disabled');
+            afternoonSlot.classList.remove('disabled');
+        }
+
+        function disableTimeSlots() {
+            morningSlot.classList.add('disabled');
+            afternoonSlot.classList.add('disabled');
+            morningSlot.classList.remove('selected');
+            afternoonSlot.classList.remove('selected');
+            selectedTime = '';
+            selectedTimeInput.value = '';
+            waktuKunjunganInput.value = '';
+        }
+
         // ===================================================
-        // VALIDATION FUNCTIONS
+        // VALIDATION FUNCTIONS (ENHANCED)
         // ===================================================
         
         function validateBooking() {
             const visitDate = tanggalKunjunganInput.value;
             const totalUnits = parseInt(jumlahUnitInput.value) || 0;
             
+            // Reset button state
+            submitButton.disabled = true;
+            submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+            
             if (!visitDate) {
-                submitButton.disabled = true;
-                submitButton.classList.add('opacity-50', 'cursor-not-allowed');
-                submitButton.textContent = 'Pilih Tanggal Kunjungan';
+                submitButton.textContent = 'Pilih Tanggal Kunjungan Terlebih Dahulu';
+                disableTimeSlots();
                 return;
             }
+
+            // Enable time slots when date is selected
+            enableTimeSlots();
 
             // Check if date is full
             const quota = dailyQuota[visitDate];
             if (quota && quota.totalBooked >= quota.maxCapacity) {
-                submitButton.disabled = true;
-                submitButton.classList.add('opacity-50', 'cursor-not-allowed');
-                submitButton.textContent = 'Jadwal Penuh';
+                submitButton.textContent = 'Jadwal Penuh - Pilih Tanggal Lain';
                 return;
             }
 
             if (totalUnits === 0) {
-                submitButton.disabled = true;
-                submitButton.classList.add('opacity-50', 'cursor-not-allowed');
                 submitButton.textContent = 'Pilih Minimal 1 Layanan';
                 return;
             }
 
             if (!selectedTime) {
-                submitButton.disabled = true;
-                submitButton.classList.add('opacity-50', 'cursor-not-allowed');
                 submitButton.textContent = 'Pilih Waktu Kunjungan';
+                return;
+            }
+
+            // Check if booking would exceed daily capacity
+            const currentBooked = quota ? quota.totalBooked : 0;
+            if (currentBooked + totalUnits > 10) {
+                const available = 10 - currentBooked;
+                submitButton.textContent = `Hanya tersisa ${available} slot - Kurangi jumlah unit`;
+                showBookingWarning(`Tanggal ini hanya tersisa ${available} slot. Silakan kurangi jumlah unit atau pilih tanggal lain.`);
                 return;
             }
 
@@ -552,16 +674,23 @@
             bookingWarning.classList.add('hidden');
         }
 
+        function showBookingWarning(message) {
+            document.getElementById('warningText').textContent = message;
+            bookingWarning.classList.remove('hidden');
+        }
+
         // ===================================================
-        // DATA FETCHING FUNCTIONS
+        // DATA FETCHING FUNCTIONS (ENHANCED)
         // ===================================================
         
-        async function fetchInitialData() {
-            quotaStatus.innerHTML = 'Memuat data...';
-            bookingIdInput.value = 'Memuat...';
+        async function fetchInitialData(showLoading = true) {
+            if (showLoading) {
+                quotaStatus.innerHTML = 'Memuat data...';
+                bookingIdInput.value = 'Memuat...';
+            }
             
             try {
-                const response = await fetch(`${scriptURL}?action=getInitialData`);
+                const response = await fetch(`${scriptURL}?action=getInitialData&t=${Date.now()}`);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 
                 const data = await response.json();
@@ -569,26 +698,43 @@
                 
                 if (data.status === "success") {
                     dailyQuota = data.dailyQuota || {}; // Get daily quota from server
-                    bookingIdInput.value = data.nextBookingId;
-                    quotaStatus.innerHTML = 'Pilih tanggal untuk melihat slot waktu';
+                    if (showLoading) {
+                        bookingIdInput.value = data.nextBookingId;
+                    }
                     
-                    console.log('Daily quota:', dailyQuota); // Debug log
+                    console.log('Daily quota updated:', dailyQuota); // Debug log
+                    
+                    // Update display immediately if date is already selected
+                    if (tanggalKunjunganInput.value) {
+                        updateDateDisplay();
+                    } else {
+                        quotaStatus.innerHTML = 'Pilih tanggal untuk melihat slot waktu';
+                        quotaMessage.innerHTML = 'Pilih tanggal kunjungan untuk melihat ketersediaan slot';
+                        quotaInfo.className = 'info-box rounded-lg p-4 mb-6 text-center text-sm';
+                    }
                 } else {
                     throw new Error(data.message || "Gagal memuat data.");
                 }
             } catch (error) {
                 console.error('Gagal mengambil data awal:', error);
-                quotaStatus.innerHTML = '<span class="text-red-500">Gagal memuat data.</span>';
-                bookingIdInput.value = 'Error!';
+                if (showLoading) {
+                    quotaStatus.innerHTML = '<span class="text-red-500">Gagal memuat data. Mencoba lagi...</span>';
+                    bookingIdInput.value = 'Error!';
+                    
+                    // Retry after 5 seconds
+                    setTimeout(() => fetchInitialData(true), 5000);
+                }
             }
         }
 
         function updateDateDisplay() {
             const visitDate = tanggalKunjunganInput.value;
             if (!visitDate) {
-                selectedDateText.textContent = 'pilih tanggal';
+                quotaMessage.innerHTML = 'Pilih tanggal kunjungan untuk melihat ketersediaan slot';
                 quotaStatus.innerHTML = 'Pilih tanggal untuk melihat slot waktu';
                 quotaInfo.className = 'info-box rounded-lg p-4 mb-6 text-center text-sm';
+                disableTimeSlots();
+                validateBooking();
                 return;
             }
 
@@ -600,7 +746,6 @@
                     month: 'long',
                     day: 'numeric'
                 });
-                selectedDateText.textContent = formattedDate;
                 
                 // Check quota for this date
                 const quota = dailyQuota[visitDate];
@@ -613,52 +758,75 @@
                         quotaMessage.innerHTML = `Kuota unit terjadwal pada <strong>${formattedDate}: ${quota.totalBooked} / ${quota.maxCapacity} unit</strong>`;
                         quotaStatus.innerHTML = '🔴 Jadwal penuh';
                         quotaInfo.className = 'info-box quota-full rounded-lg p-4 mb-6 text-center text-sm';
+                        disableTimeSlots();
                     } else if (available <= 2) {
                         quotaMessage.innerHTML = `Kuota unit terjadwal pada <strong>${formattedDate}: ${quota.totalBooked} / ${quota.maxCapacity} unit</strong>`;
                         quotaStatus.innerHTML = `⚠️ Sisa ${available} slot (hampir penuh)`;
                         quotaInfo.className = 'info-box quota-warning rounded-lg p-4 mb-6 text-center text-sm';
+                        enableTimeSlots();
                     } else {
                         quotaMessage.innerHTML = `Kuota unit terjadwal pada <strong>${formattedDate}: ${quota.totalBooked} / ${quota.maxCapacity} unit</strong>`;
                         quotaStatus.innerHTML = `✅ Tersedia ${available} slot`;
                         quotaInfo.className = 'info-box quota-available rounded-lg p-4 mb-6 text-center text-sm';
+                        enableTimeSlots();
                     }
                 } else {
                     quotaMessage.innerHTML = `Slot waktu tersedia pada <strong>${formattedDate}</strong>`;
                     quotaStatus.innerHTML = '✅ Tersedia 10 slot';
                     quotaInfo.className = 'info-box quota-available rounded-lg p-4 mb-6 text-center text-sm';
+                    enableTimeSlots();
                 }
             } catch (e) {
-                selectedDateText.textContent = 'tanggal yang dipilih';
+                console.error('Date parsing error:', e);
+                quotaMessage.innerHTML = 'Error parsing tanggal';
+                disableTimeSlots();
             }
 
             validateBooking();
         }
 
         // ===================================================
-        // EVENT LISTENERS
+        // EVENT LISTENERS (ENHANCED)
         // ===================================================
         
-        // Quantity button listeners
-        cuciPlus.addEventListener('click', () => updateQuantity('cuci', 1));
-        cuciMinus.addEventListener('click', () => updateQuantity('cuci', -1));
-        perbaikanPlus.addEventListener('click', () => updateQuantity('perbaikan', 1));
-        perbaikanMinus.addEventListener('click', () => updateQuantity('perbaikan', -1));
+        // Quantity button listeners with improved logic
+        cuciPlus.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!cuciPlus.classList.contains('disabled')) {
+                updateQuantity('cuci', 1);
+            }
+        });
+        
+        cuciMinus.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!cuciMinus.classList.contains('disabled')) {
+                updateQuantity('cuci', -1);
+            }
+        });
+        
+        perbaikanPlus.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!perbaikanPlus.classList.contains('disabled')) {
+                updateQuantity('perbaikan', 1);
+            }
+        });
+        
+        perbaikanMinus.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!perbaikanMinus.classList.contains('disabled')) {
+                updateQuantity('perbaikan', -1);
+            }
+        });
 
         // Time slot listeners
-        morningSlot.addEventListener('click', () => {
-            if (!morningSlot.classList.contains('disabled')) {
-                selectTimeSlot(morningSlot);
-            }
-        });
-        afternoonSlot.addEventListener('click', () => {
-            if (!afternoonSlot.classList.contains('disabled')) {
-                selectTimeSlot(afternoonSlot);
-            }
-        });
+        morningSlot.addEventListener('click', () => selectTimeSlot(morningSlot));
+        afternoonSlot.addEventListener('click', () => selectTimeSlot(afternoonSlot));
 
-        // Date change listeners
+        // Date change listeners with immediate update
         tanggalKunjunganInput.addEventListener('input', function(e) {
             const selectedDateString = e.target.value;
+            
+            // Check for Sunday in 2025
             if (selectedDateString.startsWith('2025')) {
                 const selectedDate = new Date(selectedDateString + 'T00:00:00');
                 if (selectedDate.getDay() === 0) { // Sunday
@@ -668,13 +836,21 @@
                     return;
                 }
             }
+            
+            // Clear time selection when date changes
+            selectedTime = '';
+            selectedTimeInput.value = '';
+            waktuKunjunganInput.value = '';
+            morningSlot.classList.remove('selected');
+            afternoonSlot.classList.remove('selected');
+            
             updateDateDisplay();
         });
 
         tanggalKunjunganInput.addEventListener('change', updateDateDisplay);
 
         // ===================================================
-        // FORM SUBMISSION
+        // FORM SUBMISSION (ENHANCED)
         // ===================================================
         
         bookingForm.addEventListener('submit', async e => {
@@ -683,8 +859,33 @@
             const visitDate = tanggalKunjunganInput.value;
             const totalUnits = parseInt(jumlahUnitInput.value);
             
-            if (!visitDate || totalUnits < 1 || !selectedTime || !bookingForm.checkValidity()) {
-                showError('Mohon lengkapi data, pilih minimal 1 layanan, dan pilih waktu kunjungan.');
+            // Enhanced validation before submission
+            if (!visitDate) {
+                showError('Mohon pilih tanggal kunjungan terlebih dahulu.');
+                return;
+            }
+            
+            if (totalUnits < 1) {
+                showError('Mohon pilih minimal 1 layanan.');
+                return;
+            }
+            
+            if (!selectedTime) {
+                showError('Mohon pilih waktu kunjungan.');
+                return;
+            }
+            
+            if (!bookingForm.checkValidity()) {
+                showError('Mohon lengkapi semua data yang diperlukan.');
+                return;
+            }
+
+            // Check quota before submission
+            const quota = dailyQuota[visitDate];
+            const currentBooked = quota ? quota.totalBooked : 0;
+            if (currentBooked + totalUnits > 10) {
+                const available = 10 - currentBooked;
+                showError(`Maaf, tanggal ini hanya tersisa ${available} slot. Silakan kurangi jumlah unit atau pilih tanggal lain.`);
                 return;
             }
 
@@ -728,6 +929,8 @@
                         clusterValue
                     );
 
+                    // Refresh data after successful booking
+                    await fetchInitialData(false);
                     showFeedback('success');
                 } else {
                     throw new Error(result.message || 'Gagal mengirim data ke server');
@@ -821,6 +1024,7 @@ _Layanan AC Profesional De Latinos & Sekitarnya_`;
 
         window.closeFeedbackMessage = function() {
             showFeedback('close');
+            stopAutoRefresh();
             window.location.href = window.location.href.split('?')[0];
         }
 
@@ -836,23 +1040,66 @@ _Layanan AC Profesional De Latinos & Sekitarnya_`;
             const todayString = todayLocal.toISOString().split('T')[0];
             
             tanggalKunjunganInput.min = todayString;
+            
+            // Auto-set today's date and immediately update display
             if (!tanggalKunjunganInput.value) {
                 tanggalKunjunganInput.value = todayString;
+                // Trigger immediate update
+                setTimeout(() => {
+                    updateDateDisplay();
+                }, 100);
             }
         }
 
         // ===================================================
-        // INITIALIZATION
+        // PAGE VISIBILITY API FOR AUTO REFRESH
         // ===================================================
         
-        function initializePage() {
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                stopAutoRefresh();
+            } else {
+                // Page became visible again, refresh data
+                fetchInitialData(false);
+                startAutoRefresh();
+            }
+        });
+
+        // ===================================================
+        // INITIALIZATION (ENHANCED)
+        // ===================================================
+        
+        async function initializePage() {
+            console.log('Initializing booking system...');
+            
+            // Set minimum date and auto-select today
             setMinVisitDate();
-            fetchInitialData();
-            updateDateDisplay();
+            
+            // Initialize quantities and buttons
+            updateQuantityButtons();
             updateTotalUnits();
+            
+            // Fetch initial data
+            await fetchInitialData(true);
+            
+            // Update display if date is already set
+            if (tanggalKunjunganInput.value) {
+                updateDateDisplay();
+            }
+            
+            // Start auto refresh
+            startAutoRefresh();
+            
+            console.log('Booking system initialized successfully');
         }
 
+        // Initialize the page
         initializePage();
+        
+        // Handle page unload
+        window.addEventListener('beforeunload', function() {
+            stopAutoRefresh();
+        });
     });
 </script>
 </body>
