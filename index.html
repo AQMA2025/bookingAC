@@ -459,7 +459,7 @@
                 >Pilih Layanan <span class="text-red-500">*</span></label
               >
               <p class="text-xs text-gray-600 mb-4">
-                💡 Total maksimal 10 unit AC per hari (gabungan cuci +
+                💡 Total maksimal 15 unit AC per hari (gabungan cuci +
                 perbaikan)
               </p>
 
@@ -520,7 +520,7 @@
                   <span
                     id="totalUnitsDisplay"
                     class="font-bold text-lg text-blue-600"
-                    >0 / 10</span
+                    >0 / 15</span
                   >
                 </div>
               </div>
@@ -722,7 +722,7 @@
         // CONFIGURATION & VARIABLES
         // ===================================================
         const scriptURL =
-          "https://script.google.com/macros/s/AKfycbwxDHpEfslcSRPl4ebJTSHAoWZMdH3aJ0tvSwThPwOtO8-h10YbTzv6M3ib883jZV-p/exec";
+          "https://script.google.com/macros/s/AKfycbwMH4ByZm3rth3e36Vc74LYM5aK3pCDFP_TsUBDcd4SfS2hELLqzfL2cthMmwCkTyhS/exec";
 
         // DOM Elements
         const bookingForm = document.forms["submit-to-google-sheet"];
@@ -842,8 +842,8 @@
 
           // Ensure total doesn't exceed 10
           const newTotal = newQty + otherQty;
-          if (newTotal > 10) {
-            newQty = 10 - otherQty; // Adjust to fit within limit
+          if (newTotal > 15) {
+            newQty = 15 - otherQty; // Adjust to fit within limit
           }
 
           serviceQuantities[serviceType] = newQty;
@@ -877,15 +877,15 @@
           );
 
           // Update plus buttons - disable if total would exceed 10
-          cuciPlus.classList.toggle("disabled", totalUnits >= 10);
-          perbaikanPlus.classList.toggle("disabled", totalUnits >= 10);
+          cuciPlus.classList.toggle("disabled", totalUnits >= 15);
+          perbaikanPlus.classList.toggle("disabled", totalUnits >= 15);
         }
 
         function updateTotalUnits() {
           const totalUnits =
             serviceQuantities.cuci + serviceQuantities.perbaikan;
           jumlahUnitInput.value = totalUnits;
-          totalUnitsDisplay.textContent = `${totalUnits} / 10`;
+          totalUnitsDisplay.textContent = `${totalUnits} / 15`;
 
           // Update color based on total
           if (totalUnits === 0) {
@@ -972,10 +972,11 @@
           enableTimeSlots();
 
           // Check if date is full
+          // Di fungsi updateDateDisplay(), pastikan ada validasi seperti ini:
           const quota = dailyQuota[visitDate];
-          if (quota && quota.totalBooked >= quota.maxCapacity) {
-            submitButton.textContent = "Jadwal Penuh - Pilih Tanggal Lain";
-            return;
+          if (quota) {
+            const available = quota.maxCapacity - quota.totalBooked;
+            // quota.maxCapacity sudah benar dari server (10 untuk Jumat, 15 untuk hari lain)
           }
 
           if (totalUnits === 0) {
@@ -990,8 +991,8 @@
 
           // Check if booking would exceed daily capacity
           const currentBooked = quota ? quota.totalBooked : 0;
-          if (currentBooked + totalUnits > 10) {
-            const available = 10 - currentBooked;
+          if (currentBooked + totalUnits > 15) {
+            const available = 15 - currentBooked;
             submitButton.textContent = `Hanya tersisa ${available} slot - Kurangi jumlah unit`;
             showBookingWarning(
               `Tanggal ini hanya tersisa ${available} slot. Silakan kurangi jumlah unit atau pilih tanggal lain.`
@@ -1116,7 +1117,7 @@
               }
             } else {
               quotaMessage.innerHTML = `Slot waktu tersedia pada <strong>${formattedDate}</strong>`;
-              quotaStatus.innerHTML = "✅ Tersedia 10 slot";
+              quotaStatus.innerHTML = "✅ Tersedia 15 slot";
               quotaInfo.className =
                 "info-box quota-available rounded-lg p-4 mb-6 text-center text-sm";
               enableTimeSlots();
@@ -1235,8 +1236,8 @@
           // Check quota before submission
           const quota = dailyQuota[visitDate];
           const currentBooked = quota ? quota.totalBooked : 0;
-          if (currentBooked + totalUnits > 10) {
-            const available = 10 - currentBooked;
+          if (currentBooked + totalUnits > 15) {
+            const available = 15 - currentBooked;
             showError(
               `Maaf, tanggal ini hanya tersisa ${available} slot. Silakan kurangi jumlah unit atau pilih tanggal lain.`
             );
