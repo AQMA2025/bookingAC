@@ -497,7 +497,7 @@
                     <div
                       class="flex justify-between py-2 border-b border-gray-100"
                     >
-                      <span class="text-gray-700">Pemeriksaan AC</span>
+                      <span class="text-gray-700">Pemeriksaan Cek</span>
                       <span class="font-medium text-green-600">Gratis</span>
                     </div>
                     <div
@@ -1428,6 +1428,7 @@
                   : "Siang (13:00 - 16:30)";
               serviceDetails.push(`Waktu: ${timeText}`);
 
+              const notes = document.getElementById("catatan").value.trim();
               await sendWhatsAppMessage(
                 document.getElementById("noHp").value,
                 document.getElementById("nama").value,
@@ -1436,7 +1437,8 @@
                 document.getElementById("alamat").value,
                 document.getElementById("bookingId").value,
                 serviceDetails.join("\n"),
-                clusterValue
+                clusterValue,
+                notes
               );
 
               // Refresh data after successful booking
@@ -1467,7 +1469,8 @@
           address,
           bookingId,
           serviceDetails,
-          cluster
+          cluster,
+          notes
         ) {
           try {
             let formattedPhone = phoneNumber.replace(/^0+/, "62");
@@ -1484,6 +1487,7 @@
             });
 
             const clusterInfo = cluster ? `\n🏘️ *Lokasi:* ${cluster}` : "";
+            const notesInfo = notes ? `\n\n*Catatan:*\n_${notes}_` : "";
 
             const customerMessage = `📋 KONFIRMASI BOOKING SERVICE AC
 
@@ -1499,7 +1503,7 @@ Booking layanan AC Anda telah berhasil dicatat:
 🛠️ *Detail Layanan:*
 ${serviceDetails}
 
-❄️ *Total Unit AC: ${unitCount} unit*
+*Total Unit AC: ${unitCount} unit*${notesInfo}
 
 ✅ Teknisi kami akan melakukan kunjungan sesuai jadwal di atas.
 
