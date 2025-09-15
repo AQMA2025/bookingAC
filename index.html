@@ -1023,7 +1023,6 @@
                 data-time="morning"
               >
                 <div class="font-bold text-lg">🌅 Pagi</div>
-                <div class="text-sm text-gray-600 mt-1">08:00 - 11:30</div>
               </div>
 
               <div
@@ -1032,7 +1031,6 @@
                 data-time="afternoon"
               >
                 <div class="font-bold text-lg">☀️ Siang</div>
-                <div class="text-sm text-gray-600 mt-1">13:00 - 16:30</div>
               </div>
             </div>
 
@@ -1445,8 +1443,8 @@
           // Update waktu kunjungan for spreadsheet
           const timeText =
             selectedTime === "morning"
-              ? "Pagi (08:00-11:30)"
-              : "Siang (13:00-16:30)";
+              ? "Pagi"
+              : "Siang";
           waktuKunjunganInput.value = timeText;
 
           validateBooking();
@@ -1959,8 +1957,8 @@
             // Create service details for WhatsApp message using jenis_layanan
             const timeText =
               selectedTime === "morning"
-                ? "Pagi (08:00 - 11:30)"
-                : "Siang (13:00 - 16:30)";
+                ? "Pagi"
+                : "Siang";
             
             const serviceDetails = [
               `Layanan: ${jenisLayanan}`,
