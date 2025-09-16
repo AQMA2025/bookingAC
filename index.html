@@ -1123,20 +1123,20 @@
         afternoonSlot.addEventListener('click', () => selectTimeSlot(afternoonSlot));
 
         // WhatsApp message function
-        async function sendWhatsAppMessage(
-            phoneNumber,
+        async function sendWhatsAppNotification(
             customerName,
+            customerPhone,
             visitDate,
-            unitCount,
             address,
             bookingId,
             serviceDetails,
-            cluster,
-            notes
+            notes,
+            unitCount,
+            waktuText
         ) {
             try {
                 // Format phone number
-                let formattedPhone = phoneNumber.toString().replace(/\D/g, '');
+                let formattedPhone = customerPhone.toString().replace(/\D/g, '');
                 if (formattedPhone.startsWith('0')) {
                     formattedPhone = '62' + formattedPhone.substring(1);
                 } else if (!formattedPhone.startsWith('62')) {
@@ -1150,10 +1150,9 @@
                     day: 'numeric'
                 });
 
-                const clusterInfo = cluster ? `\n🏘️ *Lokasi:* ${cluster}` : "";
                 const notesInfo = notes ? `\n\n*Catatan:*\n_${notes}_` : "";
 
-                const customerMessage = `📋 KONFIRMASI BOOKING SERVICE AC
+                const customerMessage = `📋 *KONFIRMASI BOOKING SERVICE AC*
 
 *Booking ID: ${bookingId}*
 
@@ -1161,11 +1160,12 @@ Halo Bpk/Ibu *${customerName}*! 👋
 
 Booking layanan AC Anda telah berhasil dicatat:
 
-📅 *Tanggal Kunjungan:* ${formattedDate}${clusterInfo}
+📅 *Tanggal Kunjungan:* ${formattedDate}
 🏠 *Alamat:* ${address}
 
 🛠️ *Detail Layanan:*
 ${serviceDetails}
+*Waktu:* ${waktuText}
 
 *Total Unit AC: ${unitCount} unit*${notesInfo}
 
@@ -1189,6 +1189,13 @@ _Layanan AC Profesional De Latinos & Sekitarnya_`;
                 });
 
                 console.log("WhatsApp API Response:", response.status);
+                
+                if (response.ok) {
+                    console.log("✅ WhatsApp message sent successfully");
+                } else {
+                    console.error("❌ WhatsApp API failed:", await response.text());
+                }
+                
                 return response.ok;
 
             } catch (error) {
@@ -1244,12 +1251,10 @@ _Layanan AC Profesional De Latinos & Sekitarnya_`;
                     waktu_kunjungan: waktuTime, // Store as TIME format for database
                     jenis_layanan: serviceDetails.join(', '),
                     jumlah_unit: total,
-                    cluster: '',
                     catatan: document.getElementById('catatan').value,
                     kode_referral: document.getElementById('kodeReferral').value,
                     status: 'pending',
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
+                    created_at: new Date().toISOString()
                 };
 
                 // Validate required fields
@@ -1272,25 +1277,23 @@ _Layanan AC Profesional De Latinos & Sekitarnya_`;
 
                     console.log('Booking saved to database:', data);
                 }
-
-                // Send WhatsApp message
-                const timeText = waktuText;
-                const serviceDetailsText = `${formData.jenis_layanan}\nWaktu: ${timeText}`;
-
-                await sendWhatsAppMessage(
-                    formData.no_hp,
+                
+                // Send WhatsApp notification
+                const serviceDetailsText = serviceDetails.join('\n');
+                await sendWhatsAppNotification(
                     formData.nama,
+                    formData.no_hp,
                     formData.tanggal_kunjungan,
-                    formData.jumlah_unit,
                     formData.alamat,
                     formData.booking_id,
                     serviceDetailsText,
-                    formData.cluster,
-                    formData.catatan
+                    formData.catatan,
+                    total,
+                    waktuText
                 );
-
-                // Generate next booking ID
-                const currentId = formData.booking_id;
+                
+                // Extract current number from booking ID and generate next ID
+                const currentId = bookingIdValue;
                 const currentNumber = parseInt(currentId.replace('AFC-', ''));
                 const nextId = `AFC-${String(currentNumber + 1).padStart(6, '0')}`;
 
@@ -1353,4 +1356,3 @@ _Layanan AC Profesional De Latinos & Sekitarnya_`;
     </script>
 </body>
 </html> 
-
