@@ -1365,28 +1365,32 @@ _Layanan AC Profesional De Latinos & Sekitarnya_`;
             const currentPath = window.location.pathname;
             const pathSegments = currentPath.split('/');
             
-            // Cek apakah ada kode di akhir URL (format: /bookingAC/A0001)
+            // Cek apakah ada kode di akhir URL (format: /bookingAC/A-0001)
             let referralCode = null;
             
             // Method 1: Dari path segments
             if (pathSegments.length > 0) {
                 const lastSegment = pathSegments[pathSegments.length - 1];
-                // Cek format kode referral (A0001, A0002, dst)
-                if (lastSegment && /^A\d{4}$/.test(lastSegment)) {
+                // Cek format kode referral (A-0001, A-0002, dst)
+                if (lastSegment && /^A-\d{4}$/.test(lastSegment)) {
                     referralCode = lastSegment;
                 }
             }
             
-            // Method 2: Dari URL parameters (?ref=A0001)
+            // Method 2: Dari URL parameters (?ref=A-0001)
             if (!referralCode) {
                 const urlParams = new URLSearchParams(window.location.search);
                 referralCode = urlParams.get('ref') || urlParams.get('referral') || urlParams.get('code');
+                // Validasi format A-0001
+                if (referralCode && !/^A-\d{4}$/.test(referralCode)) {
+                    referralCode = null;
+                }
             }
             
-            // Method 3: Dari hash (#A0001)
+            // Method 3: Dari hash (#A-0001)
             if (!referralCode) {
                 const hash = window.location.hash.substring(1);
-                if (hash && /^A\d{4}$/.test(hash)) {
+                if (hash && /^A-\d{4}$/.test(hash)) {
                     referralCode = hash;
                 }
             }
