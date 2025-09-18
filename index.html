@@ -735,7 +735,7 @@
                     <div class="mt-4 p-3 bg-gray-50 rounded-lg">
                         <div class="flex justify-between items-center">
                             <span class="font-medium text-gray-700">Total Unit AC:</span>
-                            <span id="totalUnits" class="text-xl font-bold text-gray-900">0 / 15</span>
+                            <span id="totalUnits" class="text-xl font-bold text-gray-900"></span>
                         </div>
                     </div>
                 </div>
@@ -1068,7 +1068,7 @@
 
             // Update total
             const total = Object.values(serviceQuantities).reduce((sum, qty) => sum + qty, 0);
-            document.getElementById('totalUnits').textContent = `${total} / 15`;
+            document.getElementById('totalUnits').textContent = `${total}`;
 
             // Disable plus buttons if total would exceed 15
             const canAdd = total < 15;
