@@ -767,9 +767,9 @@
 
                 <!-- Kode Referral -->
                 <div class="form-group">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Kode Referral (Opsional)</label>
-                    <input type="text" id="kodeReferral" class="form-input w-full" placeholder="MASUKKAN KODE REFERRAL JIKA ADA">
-                    <p class="text-xs text-gray-500 mt-1">Kode referral akan otomatis terisi jika Anda mengakses melalui link referral</p>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Kode Referral</label>
+                    <input type="text" id="kodeReferral" class="form-input w-full bg-gray-100 cursor-not-allowed" placeholder="Hanya terisi otomatis dari link affiliate" readonly disabled>
+                    <p class="text-xs text-gray-500 mt-1">🔒 Field ini hanya dapat diisi otomatis melalui link affiliate. Tidak dapat diisi manual.</p>
                 </div>
 
                 <!-- Submit Button -->
@@ -1422,15 +1422,30 @@ _Layanan AC Profesional De Latinos & Sekitarnya_`;
                 
                 console.log('Referral code auto-filled and locked:', referralCode);
             } else {
-                // Jika tidak ada kode referral, biarkan field optional dan editable
-                kodeReferralInput.readOnly = false;
-                kodeReferralInput.disabled = false;
+                // Jika tidak ada kode referral, tetap block field dan tidak bisa diisi manual
+                kodeReferralInput.readOnly = true;
+                kodeReferralInput.disabled = true;
+                kodeReferralInput.value = '';
+                kodeReferralInput.classList.add('bg-gray-100', 'cursor-not-allowed');
                 kodeReferralInput.classList.remove('bg-green-50', 'border-green-300', 'text-green-700');
                 
-                console.log('No referral code detected, field remains optional');
+                // Update label untuk menunjukkan field tidak bisa diisi manual
+                const label = document.querySelector('label[for="kodeReferral"]');
+                if (label) {
+                    label.innerHTML = 'Kode Referral <span class="text-gray-500">(Hanya dari link affiliate)</span>';
+                }
+                
+                // Update info text
+                const infoText = kodeReferralInput.nextElementSibling;
+                if (infoText) {
+                    infoText.textContent = '🔒 Field ini hanya dapat diisi otomatis melalui link affiliate. Tidak dapat diisi manual.';
+                    infoText.classList.remove('text-green-600');
+                    infoText.classList.add('text-gray-500');
+                }
+                
+                console.log('No referral code detected, field remains blocked for manual input');
             }
         }
     </script>
 </body>
 </html>
-
