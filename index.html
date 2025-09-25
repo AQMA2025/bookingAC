@@ -931,33 +931,44 @@
             }
         }
 
-        // Fetch daily quota
-        async function fetchDailyQuota() {
+        // Global variable to store current available quota
+        let currentAvailableQuota = 15;
+
+        // Fetch daily quota for specific date
+        async function fetchDailyQuota(selectedDate = null) {
             try {
-                const today = new Date().toISOString().split('T')[0];
+                const targetDate = selectedDate || new Date().toISOString().split('T')[0];
                 
                 if (supabaseClient) {
                     const { data: bookings } = await supabaseClient
                         .from('bookings')
                         .select('jumlah_unit')
-                        .eq('tanggal_kunjungan', today);
+                        .eq('tanggal_kunjungan', targetDate);
                     
                     const totalBooked = bookings ? bookings.reduce((sum, booking) => sum + (booking.jumlah_unit || 0), 0) : 0;
                     const maxCapacity = 15;
                     const available = Math.max(0, maxCapacity - totalBooked);
                     
+                    // Update global quota variable
+                    currentAvailableQuota = available;
+                    
+                    const displayDate = new Date(targetDate + 'T00:00:00');
                     quotaStatus.innerHTML = `
                         <div class="text-center">
-                            <p class="text-lg font-semibold">Kuota unit terjadwal pada ${new Date().toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}</p>
+                            <p class="text-lg font-semibold">Kuota unit terjadwal pada ${displayDate.toLocaleDateString('id-ID', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}</p>
                             <p class="text-sm ${available > 0 ? 'text-green-600' : 'text-red-600'}">
                                 ${available > 0 ? `✅ Tersedia ${available} slot` : '❌ Kuota penuh'}
                             </p>
                         </div>
                     `;
+                    
+                    // Update quantity validation after quota fetch
+                    updateServiceDisplay();
                 }
             } catch (error) {
                 console.error('Error fetching quota:', error);
                 quotaStatus.innerHTML = '<p class="text-gray-600">Tidak dapat memuat kuota</p>';
+                currentAvailableQuota = 15; // Default fallback
             }
         }
 
@@ -989,7 +1000,7 @@
         const todayString = today.toISOString().split('T')[0];
         tanggalKunjunganInput.min = todayString;
         
-        tanggalKunjunganInput.addEventListener("input", function (e) {
+        tanggalKunjunganInput.addEventListener("input", async function (e) {
             const selectedDateString = e.target.value;
             const selectedDate = new Date(selectedDateString + "T00:00:00");
             const currentDate = new Date();
@@ -1025,6 +1036,26 @@
                 e.target.value = "";
                 return;
             }
+
+            // Update quota for selected date
+            await fetchDailyQuota(selectedDateString);
+            
+            // Reset service quantities if they exceed new quota
+            const currentTotal = Object.values(serviceQuantities).reduce((sum, qty) => sum + qty, 0);
+            if (currentTotal > currentAvailableQuota) {
+                // Reset all quantities to 0
+                serviceQuantities.cuci = 0;
+                serviceQuantities.perbaikan = 0;
+                serviceQuantities.pasang = 0;
+                updateServiceDisplay();
+                updateSubmitButton();
+                
+                if (currentAvailableQuota === 0) {
+                    alert('Kuota untuk tanggal ini sudah penuh. Silakan pilih tanggal lain.');
+                } else {
+                    alert(`Kuota untuk tanggal ini hanya tersisa ${currentAvailableQuota} unit. Silakan sesuaikan pesanan Anda.`);
+                }
+            }
         });
 
         // Service quantity management
@@ -1039,9 +1070,9 @@
             // Ensure quantity doesn't go below 0
             if (newQty < 0) newQty = 0;
 
-            // Check if total would exceed 15
-            if (totalOtherServices + newQty > 15) {
-                alert('Total maksimal 15 unit AC per hari');
+            // Check if total would exceed available quota for selected date
+            if (totalOtherServices + newQty > currentAvailableQuota) {
+                alert(`Total maksimal ${currentAvailableQuota} unit AC tersedia untuk tanggal yang dipilih`);
                 return;
             }
 
@@ -1070,8 +1101,8 @@
             const total = Object.values(serviceQuantities).reduce((sum, qty) => sum + qty, 0);
             document.getElementById('totalUnits').textContent = `${total}`;
 
-            // Disable plus buttons if total would exceed 15
-            const canAdd = total < 15;
+            // Disable plus buttons if total would exceed available quota
+            const canAdd = total < currentAvailableQuota;
             document.getElementById('cuciPlus').classList.toggle('disabled', !canAdd);
             document.getElementById('perbaikanPlus').classList.toggle('disabled', !canAdd);
             document.getElementById('pasangPlus').classList.toggle('disabled', !canAdd);
